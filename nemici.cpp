@@ -19,22 +19,24 @@
 #define SCREEN_W 840
 #define CAR_H 111
 
+extern int num_enemies;
 extern bool redraw;
-extern float speed;
+extern float speedinc;
 
-void move_enemies(enemy_t *&ene) {
+void move_enemies(enemy_t *&ene, int index, int corsia) {
 	
-	int index; float posx;
-	srand((unsigned)time(NULL));
-	index = rand() % 3; //genera un numero casuale da 0 a 2
-	
-	//ene[0].x = posx;
-	
-	if(ene[0].y > SCREEN_H - 10 && ene[0].y < SCREEN_H + 10) {
-    		ene[0].y = -CAR_H;
+	if (ene[index].y > SCREEN_H - 10 && ene[index].y < SCREEN_H + 10) {
+    		ene[index].y = -CAR_H;
 	}
-        
-    	ene[0].y += 3.0;
+		
+	ene[index].y += 3.0 + speedinc;
+	
+	switch(corsia) {
+		case 0: ene[index].x = 200; break;
+		case 1: ene[index].x = 325; break;
+		case 2: ene[index].x = 455; break;
+		case 3: ene[index].x = 585; break;
+	}
     	
 	redraw = true;
 }

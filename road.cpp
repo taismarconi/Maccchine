@@ -15,6 +15,8 @@
 
 #include "data.h"
 
+using namespace std;
+
 #define SCREEN_H 650
 #define SCREEN_W 840
 #define CAR_H 111
@@ -25,6 +27,8 @@ const float FPS = 60;
 
 float speed = 4.0;
 float road_y = 2.0;
+float speedinc = 0.2;
+//float corsie[4] = {200, 325, 455, 585};
 
 int num_enemies = 3;
 
@@ -38,7 +42,9 @@ enum MYKEYS {
 
 bool key[4] = { false, false, false, false };
 
-void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c){
+void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c) {
+	
+	int index, corsia;
 	
 	//inizializzo le altre struct
 	enemy_t *ene;
@@ -48,8 +54,8 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c){
 	
 	//inizializzo i nemici
 	ene[0].x = 200; ene[0].y = -CAR_H; ene[0].imm = al_load_bitmap("media/bcar.png");
-	ene[1].x = 325; ene[1].y = 5; ene[1].imm = al_load_bitmap("media/gcar.png");
-	ene[2].x = 455; ene[2].y = 5; ene[2].imm = al_load_bitmap("media/wwcar.png");
+	ene[1].x = 325; ene[1].y = -CAR_H; ene[1].imm = al_load_bitmap("media/gcar.png");
+	ene[2].x = 455; ene[2].y = -CAR_H; ene[2].imm = al_load_bitmap("media/wwcar.png");
 	
 	score.punteggio = 0;
 	std::ifstream ifs("record.txt");
@@ -96,7 +102,7 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c){
    	while(!doexit) {
       		ALLEGRO_EVENT ev;
       		al_wait_for_event(event_queue_one, &ev);
-
+		
       		if(ev.type == ALLEGRO_EVENT_TIMER) {
 
       			score.punteggio += moveit(road_y);
@@ -108,8 +114,7 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c){
       				ofs<<score.record;
 			}
     			
-			move_car(c);
-			move_enemies(ene);
+			move_car(c, ene);
  		}
  		
 		else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
@@ -168,9 +173,25 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c){
 	     		al_draw_bitmap(road, 0, road_y, 0);
 	     		al_draw_bitmap(road, 0, road_y - SCREEN_H + 5, 0);
 	     		
-	     		al_draw_bitmap(ene[0].imm, ene[0].x, ene[0].y, 0);
-	   		al_draw_bitmap(ene[1].imm, ene[1].x, ene[1].y, 0);
-			al_draw_bitmap(ene[2].imm, ene[2].x, ene[2].y, 0);
+	     		srand((unsigned)time(NULL));
+			index = rand() % 3;
+			corsia = rand() % 4;
+	     		
+	     		for (int i = 0; i < num_enemies; i++) {
+	     			if (i == index) {
+	     				move_enemies(ene, index, corsia);
+	     			}
+	     			else {
+	     				ene[i].y += 3.0 + speedinc;
+	     			}
+	     		}
+	     		
+	     		for (int i = 0; i < num_enemies; i++) {
+	     			al_draw_bitmap(ene[i].imm, ene[i].x, ene[i].y, 0);
+	     		}
+	   		
+	   		//al_draw_bitmap(ene[1].imm, ene[1].x, ene[1].y, 0);
+			//al_draw_bitmap(ene[2].imm, ene[2].x, ene[2].y, 0);
 	
 			if (key[KEY_LEFT]) {
 				al_draw_bitmap(c.imm[2], c.x, c.y, 0);

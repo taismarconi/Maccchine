@@ -15,6 +15,8 @@
 
 #include "data.h"
 
+using namespace std;
+
 #define SCREEN_H 650
 #define SCREEN_W 840
 #define CAR_H 111
@@ -27,7 +29,7 @@ enum MYKEYS {
    KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT
 };
 
-void move_car(car_t &c) {
+void move_car(car_t &c, enemy_t *&ene) {
 	
 	if(key[KEY_UP] && c.y > 5) {
         	c.y -= speed;
@@ -44,6 +46,6 @@ void move_car(car_t &c) {
 	if(key[KEY_RIGHT] && c.x < SCREEN_W - 215) {
 		c.x += speed;
 	}
-
+	
 	redraw = true;
 }
