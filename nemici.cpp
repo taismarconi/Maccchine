@@ -23,13 +23,7 @@ extern int num_enemies;
 extern bool redraw;
 extern float speedinc;
 
-void move_enemies(enemy_t *&ene, int index, int corsia) {
-	
-	if (ene[index].y > SCREEN_H - 10 && ene[index].y < SCREEN_H + 10) {
-    		ene[index].y = -CAR_H;
-	}
-		
-	ene[index].y += 3.0 + speedinc;
+void move_enemies(enemy_t *&ene, int index, int &corsia) {
 	
 	switch(corsia) {
 		case 0: ene[index].x = 200; break;

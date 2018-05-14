@@ -25,7 +25,7 @@ extern int num_enemies;
 int moveit(float &road_y){
 
 	if(road_y > SCREEN_H - 10 && road_y < SCREEN_H + 10) {
-    		road_y = 0;
+		road_y = 0;
     		speedinc += 0.2;
     		return 100;
 	}

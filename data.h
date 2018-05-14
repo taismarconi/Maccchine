@@ -21,4 +21,4 @@ void gestione_menu(ALLEGRO_DISPLAY *display);
 void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c);
 int moveit(float &road_y);
 void move_car(car_t &c, enemy_t *&ene);
-void move_enemies(enemy_t *&ene, int, int);
+void move_enemies(enemy_t *&ene, int, int&);

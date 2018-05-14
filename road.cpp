@@ -45,7 +45,6 @@ bool key[4] = { false, false, false, false };
 void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c) {
 	
 	int index, corsia;
-	
 	//inizializzo le altre struct
 	enemy_t *ene;
 	ene = new enemy_t [num_enemies];
@@ -104,7 +103,7 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c) {
       		al_wait_for_event(event_queue_one, &ev);
 		
       		if(ev.type == ALLEGRO_EVENT_TIMER) {
-
+			
       			score.punteggio += moveit(road_y);
       			//std::cout<<score.punteggio<<" "<<score.record<<"\n";
       			
@@ -166,32 +165,32 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c) {
 		}
 		
      		if(redraw && al_is_event_queue_empty(event_queue_one)) {
+     			
+     			srand((unsigned)time(NULL));
+			index = rand() % 3;
+			corsia = rand() % 4;
+        
          		redraw = false;
  
          		al_clear_to_color(al_map_rgb(0, 0, 0));
 
 	     		al_draw_bitmap(road, 0, road_y, 0);
 	     		al_draw_bitmap(road, 0, road_y - SCREEN_H + 5, 0);
-	     		
-	     		srand((unsigned)time(NULL));
-			index = rand() % 3;
-			corsia = rand() % 4;
-	     		
-	     		for (int i = 0; i < num_enemies; i++) {
-	     			if (i == index) {
-	     				move_enemies(ene, index, corsia);
-	     			}
-	     			else {
-	     				ene[i].y += 3.0 + speedinc;
-	     			}
-	     		}
-	     		
-	     		for (int i = 0; i < num_enemies; i++) {
-	     			al_draw_bitmap(ene[i].imm, ene[i].x, ene[i].y, 0);
-	     		}
+			
+			for (int i = 0; i < num_enemies; i++) {
+				if (ene[i].y > SCREEN_H - 10 && ene[i].y < SCREEN_H + 10) {
+					ene[i].y = -CAR_H;
+					
+					move_enemies(ene, index, corsia);
+					//cout<<index<<" "<<corsia<<endl;
+				}
+				
+				ene[i].y += 3.0 + speedinc;
+	   		}
 	   		
-	   		//al_draw_bitmap(ene[1].imm, ene[1].x, ene[1].y, 0);
-			//al_draw_bitmap(ene[2].imm, ene[2].x, ene[2].y, 0);
+	   		for (int i = 0; i < num_enemies; i++) {
+	   			al_draw_bitmap(ene[i].imm, ene[i].x, ene[i].y, 0);
+	   		}	
 	
 			if (key[KEY_LEFT]) {
 				al_draw_bitmap(c.imm[2], c.x, c.y, 0);
