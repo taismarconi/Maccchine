@@ -20,7 +20,10 @@ using namespace std;
 #define SCREEN_H 650
 #define SCREEN_W 840
 #define CAR_H 111
+#define CAR_W 76
+#define CAR_E 58
 
+extern int state, num_enemies;
 extern bool redraw;
 extern float speed;
 extern bool key[4];
@@ -48,4 +51,14 @@ void move_car(car_t &c, enemy_t *&ene) {
 	}
 	
 	redraw = true;
+}
+
+void check_collisione(car_t &c, enemy_t *&ene, ALLEGRO_DISPLAY *display, ALLEGRO_TIMER *timer) {
+	for (int i = 0; i < num_enemies; i++) {
+		if (c.x > ene[i].x - CAR_W + 13 && c.x < ene[i].x + CAR_E - 15) {
+			if (c.y < ene[i].y + CAR_H - 10) {
+				game_over(display, timer, c, ene);
+			}	
+		}
+	}
 }

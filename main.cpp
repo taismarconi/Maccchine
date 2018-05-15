@@ -14,7 +14,7 @@ using namespace std;
 #define SCREEN_W 840	/**< larghezza dello schermo*/
 #define SCREEN_H 650		/**< altezza dello schermo*/
 
-int state; // automaticamente settata a 0, extern permette di non passarla alle funzioni
+int state = 0; // automaticamente settata a 0, extern permette di non passarla alle funzioni
 
 int main() {
 
@@ -23,8 +23,9 @@ int main() {
         	return -1;
     	}
 
-    	ALLEGRO_DISPLAY *display = al_create_display(SCREEN_W,SCREEN_H);
+    	ALLEGRO_DISPLAY *display = al_create_display(SCREEN_W, SCREEN_H);
     	al_set_window_title(display, "Cars");
+    	
     	if(!display){
         	al_show_native_message_box(display, "Sample Title", "Display Settings", "Display not create", NULL,ALLEGRO_MESSAGEBOX_ERROR);
         	return -1;   
@@ -34,17 +35,8 @@ int main() {
     	al_install_keyboard();
     	al_init_image_addon(); 
    
-    	while(state >= 0){
-		switch(state){
-            		case 0: 
-                		gestione_menu(display);
-                		break;
-            		/**case 1:
-                		game_over(state, display);
-                		break; */
-        	}
-    	}
-    	
+	gestione_menu(display);
+
     	al_destroy_display(display);
     	return 0;
 }

@@ -26,7 +26,7 @@ extern float speedinc;
 void move_enemies(enemy_t *&ene, int index, int &corsia) {
 	
 	switch(corsia) {
-		case 0: ene[index].x = 200; break;
+		case 0: ene[index].x = 195; break;
 		case 1: ene[index].x = 325; break;
 		case 2: ene[index].x = 455; break;
 		case 3: ene[index].x = 585; break;

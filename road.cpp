@@ -52,7 +52,7 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c) {
 	score_t score;
 	
 	//inizializzo i nemici
-	ene[0].x = 200; ene[0].y = -CAR_H; ene[0].imm = al_load_bitmap("media/bcar.png");
+	ene[0].x = 195; ene[0].y = -CAR_H; ene[0].imm = al_load_bitmap("media/bcar.png");
 	ene[1].x = 325; ene[1].y = -CAR_H; ene[1].imm = al_load_bitmap("media/gcar.png");
 	ene[2].x = 455; ene[2].y = -CAR_H; ene[2].imm = al_load_bitmap("media/wwcar.png");
 	
@@ -114,6 +114,9 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c) {
 			}
     			
 			move_car(c, ene);
+			if (ene[0].y < SCREEN_H - 98) {
+				check_collisione(c, ene, display, timer);
+			}	
  		}
  		
 		else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
