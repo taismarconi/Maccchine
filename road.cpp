@@ -30,7 +30,7 @@ float road_y = 2.0;
 float speedinc = 0.2;
 //float corsie[4] = {200, 325, 455, 585};
 
-int num_enemies = 3;
+int num_enemies = 6;
 
 extern int state;
 extern bool doexit;
@@ -52,9 +52,13 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c) {
 	score_t score;
 	
 	//inizializzo i nemici
-	ene[0].x = 195; ene[0].y = -CAR_H; ene[0].imm = al_load_bitmap("media/bcar.png");
-	ene[1].x = 325; ene[1].y = -CAR_H; ene[1].imm = al_load_bitmap("media/gcar.png");
-	ene[2].x = 455; ene[2].y = -CAR_H; ene[2].imm = al_load_bitmap("media/wwcar.png");
+	ene[0].x = 195; ene[0].y = - CAR_H; ene[0].imm = al_load_bitmap("media/bcar.png");
+	ene[1].x = 325; ene[1].y = - CAR_H; ene[1].imm = al_load_bitmap("media/gcar.png");
+	ene[2].x = 455; ene[2].y = - CAR_H; ene[2].imm = al_load_bitmap("media/wwcar.png");
+	
+	ene[3].x = 530; ene[3].y = - CAR_H - SCREEN_H/2; ene[3].imm = al_load_bitmap("media/bcar.png");
+	ene[4].x = 395; ene[4].y = - CAR_H - SCREEN_H/2; ene[4].imm = al_load_bitmap("media/gcar.png");
+	ene[5].x = 260; ene[5].y = - CAR_H - SCREEN_H/2; ene[5].imm = al_load_bitmap("media/wwcar.png");
 	
 	score.punteggio = 0;
 	std::ifstream ifs("record.txt");
@@ -114,9 +118,9 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c) {
 			}
     			
 			move_car(c, ene);
-			if (ene[0].y < SCREEN_H - 98) {
-				check_collisione(c, ene, display, timer);
-			}	
+			check_collisione(c, ene, display, timer);	
+			
+			//cout<<speedinc<<endl;
  		}
  		
 		else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
@@ -170,8 +174,8 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c) {
      		if(redraw && al_is_event_queue_empty(event_queue_one)) {
      			
      			srand((unsigned)time(NULL));
-			index = rand() % 3;
-			corsia = rand() % 4;
+			index = rand() % num_enemies;
+			corsia = rand() % 7;
         
          		redraw = false;
  
@@ -182,17 +186,23 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c) {
 			
 			for (int i = 0; i < num_enemies; i++) {
 				if (ene[i].y > SCREEN_H - 10 && ene[i].y < SCREEN_H + 10) {
-					ene[i].y = -CAR_H;
+					ene[i].y = - CAR_H;
 					
 					move_enemies(ene, index, corsia);
-					//cout<<index<<" "<<corsia<<endl;
 				}
 				
 				ene[i].y += 3.0 + speedinc;
 	   		}
 	   		
-	   		for (int i = 0; i < num_enemies; i++) {
-	   			al_draw_bitmap(ene[i].imm, ene[i].x, ene[i].y, 0);
+	   		if (speedinc < 3.5) {
+	   			for (int i = 0; i < num_enemies; i++) {
+	   				al_draw_bitmap(ene[i].imm, ene[i].x, ene[i].y, 0);
+	   			}
+	   		}
+	   		else {
+	   			for (int i = 0; i < num_enemies/2; i++) {
+	   				al_draw_bitmap(ene[i].imm, ene[i].x, ene[i].y, 0);
+	   			}
 	   		}	
 	
 			if (key[KEY_LEFT]) {

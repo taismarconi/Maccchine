@@ -56,7 +56,7 @@ void move_car(car_t &c, enemy_t *&ene) {
 void check_collisione(car_t &c, enemy_t *&ene, ALLEGRO_DISPLAY *display, ALLEGRO_TIMER *timer) {
 	for (int i = 0; i < num_enemies; i++) {
 		if (c.x > ene[i].x - CAR_W + 13 && c.x < ene[i].x + CAR_E - 15) {
-			if (c.y < ene[i].y + CAR_H - 10) {
+			if (c.y < ene[i].y + CAR_H - 10 && c.y > ene[i].y - CAR_H) {
 				game_over(display, timer, c, ene);
 			}	
 		}

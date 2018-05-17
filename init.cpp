@@ -119,12 +119,14 @@ void gestione_menu(ALLEGRO_DISPLAY* display){
 
 void game_over(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER *timer, car_t &c, enemy_t *&ene) {
 
-	al_destroy_timer(timer);
+	cout<<"Collisione"<<endl;
 	//al_destroy_display(display);
 	
 	ALLEGRO_FONT *gamefont;
 	gamefont = al_load_font("media/arcade.ttf", 90, 0);
 	
 	al_draw_text(gamefont, al_map_rgb(250, 0, 0), 260, 100, 0, "GAME OVER");
+	al_flip_display();
+	al_destroy_timer(timer);
 	
 }
