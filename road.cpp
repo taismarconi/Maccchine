@@ -43,6 +43,7 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEU
 	bool controllo = true;
 	
 	bool collisione = false;
+	bool pausa = false;
 	
 	int index_1, index_2, corsia;
 	
@@ -72,6 +73,9 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEU
     	ALLEGRO_FONT *numerofont;
     	ALLEGRO_FONT *recordfont;
     	ALLEGRO_FONT *scorefont;
+    	
+    	ALLEGRO_FONT *pausafont;
+    	pausafont = al_load_font("media/arcade.ttf", 20, 0);
     			
 	punteggiofont = al_load_font("media/arcade.ttf", 30, 0);
 	numerofont = al_load_font("media/arcade.ttf", 40, 0);
@@ -133,7 +137,7 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEU
 			       		break;
 			       		
 			       	case ALLEGRO_KEY_SPACE:
-			       		key[KEY_SPACE] = false;
+			       		key[KEY_SPACE] = true;
 			       		break;	
 			 }   
 		}       
@@ -161,6 +165,11 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEU
 				       	break;
 				
 				case ALLEGRO_KEY_SPACE:
+					pausa = true;
+					while (pausa) {
+						break_game(event_queue, pausa);
+					}
+					
 			       		key[KEY_SPACE] = false;
 			       		break;       	
 			 }
@@ -223,6 +232,8 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEU
 		 	
     			al_draw_text(recordfont, al_map_rgb(200, 100, 0), 585, 590, 0, "Record");
     			al_draw_textf(scorefont, al_map_rgb(200, 255, 255), 700, 585, 0, "%i", score.record);
+    			
+    			al_draw_text(pausafont, al_map_rgb(200, 230, 100), 15, 625, 0, "premere SPAZIO per mettere in pausa");
          		
          		al_flip_display();
       		}

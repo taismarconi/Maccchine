@@ -182,6 +182,59 @@ void gestione_menu(ALLEGRO_DISPLAY* display){
    	}
 }
 
+void break_game(ALLEGRO_EVENT_QUEUE* event_queue, bool &pausa) {
+
+	ALLEGRO_FONT *pausafont;
+    	ALLEGRO_FONT *nextfont;
+
+    	pausafont = al_load_font("media/arcade.ttf", 90, 0);
+    	nextfont = al_load_font("media/arcade.ttf", 30, 0);
+
+	al_draw_text(pausafont, al_map_rgb(250, 0, 0), 245, 100, 0, "PAUSA");
+	al_draw_text(nextfont, al_map_rgb(250, 0, 0), 220, 200, 0, "Premi SPAZIO per riprendere");
+	
+	al_flip_display();
+
+	while(!doexit) {
+      		ALLEGRO_EVENT ev;
+      		al_wait_for_event(event_queue, &ev);
+      		       
+                if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+         		doexit = true;
+         		pausa = false;
+         		break;
+      		}
+      		
+      		else if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+         		switch(ev.keyboard.keycode) {
+         			case ALLEGRO_KEY_ESCAPE: {
+				       	doexit = false;
+				} break;
+				
+				case ALLEGRO_KEY_SPACE: {
+					key[KEY_SPACE] = true;
+				} break;
+			}
+		}	   
+
+      		else if(ev.type == ALLEGRO_EVENT_KEY_UP) {
+			 switch(ev.keyboard.keycode) {
+			 	case ALLEGRO_KEY_ESCAPE: {
+			 		pausa = false;
+			    		doexit = true;
+			    	} break;
+			       		
+			 	case ALLEGRO_KEY_SPACE: {
+			        	al_destroy_font(pausafont);
+                                	al_destroy_font(nextfont);
+                                	pausa = false;
+			       	} return;
+			 }
+		}
+      	}	
+	
+}
+
 void game_over(ALLEGRO_EVENT_QUEUE *event_queue, car_t &c, enemy_t *&ene, bool &collisione) {
 
 	cout<<"Collisione"<<endl;
@@ -204,6 +257,7 @@ void game_over(ALLEGRO_EVENT_QUEUE *event_queue, car_t &c, enemy_t *&ene, bool &
       		       
                 if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
          		doexit = true;
+         		collisione = false;
          		break;
       		}
       		

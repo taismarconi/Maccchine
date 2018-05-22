@@ -20,6 +20,7 @@ struct score_t {
 void replay(car_t&, enemy_t*&, score_t&);
 void gestione_menu(ALLEGRO_DISPLAY *display);
 void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, ALLEGRO_BITMAP* road, car_t &c);
+void break_game(ALLEGRO_EVENT_QUEUE* event_queue, bool&);
 void game_over(ALLEGRO_EVENT_QUEUE *event_queue, car_t &c, enemy_t *&ene, bool&);
 int moveit(float &road_y);
 void move_car(car_t &c, enemy_t *&ene);
