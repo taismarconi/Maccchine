@@ -23,11 +23,53 @@ using namespace std;
 
 extern int state;
 
+int num_enemies = 6;
+float speedinc = 0.2;
+float road_y = 2.0;
+
 bool doexit = false;
 bool redraw = true;
 
-void gestione_menu(ALLEGRO_DISPLAY* display){
+enum MYKEYS {
+   KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_SPACE, KEY_ESCAPE
+};
 
+bool key[6] = { false, false, false, false, false, false};
+
+const float FPS = 60;
+
+void replay(car_t &c, enemy_t *&ene, score_t &score) {
+	
+	c.x = SCREEN_W / 2.0 + 22.0;
+	c.y = SCREEN_H - CAR_H - 75.0;
+	
+	ene[0].x = 195; ene[0].y = - CAR_H; ene[0].imm = al_load_bitmap("media/bcar.png");
+	ene[1].x = 325; ene[1].y = - CAR_H; ene[1].imm = al_load_bitmap("media/gcar.png");
+	ene[2].x = 455; ene[2].y = - CAR_H; ene[2].imm = al_load_bitmap("media/wwcar.png");
+	
+	ene[3].x = 530; ene[3].y = - CAR_H - SCREEN_H/2; ene[3].imm = al_load_bitmap("media/bcar.png");
+	ene[4].x = 395; ene[4].y = - CAR_H - SCREEN_H/2; ene[4].imm = al_load_bitmap("media/gcar.png");
+	ene[5].x = 260; ene[5].y = - CAR_H - SCREEN_H/2; ene[5].imm = al_load_bitmap("media/wwcar.png");
+	
+	score.punteggio = 0;
+	
+	speedinc = 0.2;
+	num_enemies = 6;
+	road_y = 2.0;
+	
+	for (int i = 0; i < 6; i++) {
+		key[i] = false;
+	}
+}
+
+void gestione_menu(ALLEGRO_DISPLAY* display){
+    	
+   	ALLEGRO_TIMER *timer = NULL;
+	timer = al_create_timer(1.0 / FPS);
+   	if(!timer) {
+      		fprintf(stderr, "failed to create timer!\n");
+   	}
+   	
 	al_install_audio();
    	al_init_acodec_addon();
     	al_init_font_addon();
@@ -35,23 +77,18 @@ void gestione_menu(ALLEGRO_DISPLAY* display){
    	
    	al_reserve_samples(10);
    	
-    	ALLEGRO_BITMAP *road = NULL;
+   	ALLEGRO_BITMAP *road = NULL;
     	road = al_load_bitmap("media/road.png");
-
 	if(!road) {
    		fprintf(stderr, "failed to create gestione_menu bitmap\n");
 		al_destroy_display(display);
     	}
-    	
-    	ALLEGRO_FONT *titlefont;
-    	ALLEGRO_FONT *startfont;
-    	ALLEGRO_FONT *instructionsfont;
-    	
-    	titlefont = al_load_font("media/arcade.ttf", 70, 0);
-    	startfont = al_load_font("media/arcade.ttf", 40, 0);
-    	instructionsfont = al_load_font("media/arcade.ttf", 25, 0);
 	
     	al_draw_bitmap(road, 0, 0, 0);
+    	
+    	ALLEGRO_FONT *titlefont = al_load_font("media/arcade.ttf", 70, 0);
+    	ALLEGRO_FONT *startfont = al_load_font("media/arcade.ttf", 40, 0);
+    	ALLEGRO_FONT *instructionsfont = al_load_font("media/arcade.ttf", 25, 0);
     	al_draw_text(titlefont, al_map_rgb(0, 0, 0), 260, 100, 0, "Maccchine");
     	al_draw_text(startfont, al_map_rgb(0, 0, 0), 155, 250, 0, "Premi spazio per cominciare");
     	al_draw_text(instructionsfont, al_map_rgb(0, 0, 0), 525, 585, 0, "Esc per uscire");
@@ -88,45 +125,112 @@ void gestione_menu(ALLEGRO_DISPLAY* display){
 	
     	al_draw_bitmap(car, c.x, c.y, 0);
 	
-    	al_flip_display();
-	
-    	ALLEGRO_EVENT events;
-    	ALLEGRO_EVENT_QUEUE *event_queue = al_create_event_queue();
-    	
-	al_register_event_source(event_queue, al_get_keyboard_event_source());
-    	al_wait_for_event(event_queue, &events);
-    	
-    	/**if(events.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-		state = -1;
-		doexit = true;
-	}*/
-	
-	if(events.type==ALLEGRO_EVENT_KEY_DOWN){
-    		switch(events.keyboard.keycode){
-        		case ALLEGRO_KEY_ESCAPE:
-        	    		state = -1;
-        	    		doexit = true;
-        	    		break;
-        		case ALLEGRO_KEY_SPACE: {
-                       		al_destroy_font(titlefont);
-                        	al_destroy_font(startfont);
-                        	al_destroy_font(instructionsfont);
-            			moveroad(display, road, c); //in road.cpp
-                    	} break;
-    		}
-	}
+	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
+    	event_queue = al_create_event_queue();
+   	if(!event_queue) {
+      		fprintf(stderr, "failed to create event_queue!\n");
+      		
+      		for (int i = 0; i < 3; i++) {
+      			al_destroy_bitmap(c.imm[i]);
+      		}
+      		
+      		al_destroy_bitmap(road);
+      		al_destroy_display(display);
+      		al_destroy_timer(timer);
+   	}
+ 
+   	al_register_event_source(event_queue, al_get_display_event_source(display));
+   	al_register_event_source(event_queue, al_get_timer_event_source(timer));
+   	al_register_event_source(event_queue, al_get_keyboard_event_source()); 
+   
+   	al_flip_display();
+ 
+   	al_start_timer(timer);
+ 
+   	while(!doexit) {
+      		ALLEGRO_EVENT ev;
+      		al_wait_for_event(event_queue, &ev);
+      		
+		if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+         		break;
+      		}
+      		
+      		else if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+         		switch(ev.keyboard.keycode) {
+         			case ALLEGRO_KEY_ESCAPE:
+				       	doexit = false;
+				       	break;
+				case ALLEGRO_KEY_SPACE:
+				       	key[KEY_SPACE] = true;
+				       	break;
+			 }
+		}       
+
+      		else if(ev.type == ALLEGRO_EVENT_KEY_UP) {
+			 switch(ev.keyboard.keycode) {
+			    	case ALLEGRO_KEY_ESCAPE:
+         				state = -1;
+			    		doexit = true;
+			       		break;
+
+			    	case ALLEGRO_KEY_SPACE:
+         				moveroad(display, timer, event_queue, road, c);
+			        	key[KEY_SPACE] = false;
+			        	break;
+			 }
+      		}
+   	}
 }
 
-void game_over(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER *timer, car_t &c, enemy_t *&ene) {
+void game_over(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER *timer, ALLEGRO_EVENT_QUEUE *event_queue, car_t &c, enemy_t *&ene, bool &collisione) {
 
 	cout<<"Collisione"<<endl;
-	//al_destroy_display(display);
 	
-	ALLEGRO_FONT *gamefont;
-	gamefont = al_load_font("media/arcade.ttf", 90, 0);
-	
-	al_draw_text(gamefont, al_map_rgb(250, 0, 0), 260, 100, 0, "GAME OVER");
+	ALLEGRO_FONT *gameoverfont;
+    	ALLEGRO_FONT *nextgamefont;
+
+    	gameoverfont = al_load_font("media/arcade.ttf", 90, 0);
+    	nextgamefont = al_load_font("media/arcade.ttf", 30, 0);
+
+	al_draw_text(gameoverfont, al_map_rgb(250, 0, 0), 225, 100, 0, "GAME OVER");
+	al_draw_text(nextgamefont, al_map_rgb(250, 0, 0), 220, 200, 0, "Premi SPAZIO per ricominciare");
+    	al_draw_text(nextgamefont, al_map_rgb(250, 0, 0), 265, 235, 0, "Premi ESC per uscire");
+    	
 	al_flip_display();
-	al_destroy_timer(timer);
-	
+
+	while(!doexit) {
+      		ALLEGRO_EVENT ev;
+      		al_wait_for_event(event_queue, &ev);
+      		       
+                if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+         		break;
+      		}
+      		
+      		else if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+         		switch(ev.keyboard.keycode) {
+         			case ALLEGRO_KEY_ESCAPE: {
+				       	doexit = false;
+				} break;
+				
+				case ALLEGRO_KEY_SPACE: {
+					key[KEY_SPACE] = true;
+				} break;
+			}
+		}	   
+
+      		else if(ev.type == ALLEGRO_EVENT_KEY_UP) {
+			 switch(ev.keyboard.keycode) {
+			 	case ALLEGRO_KEY_ESCAPE: {
+			 		collisione = false;
+			    		doexit = true;
+			    	} break;
+			       		
+			 	case ALLEGRO_KEY_SPACE: {
+			        	al_destroy_font(gameoverfont);
+                                	al_destroy_font(nextgamefont);
+                                	collisione = false;
+			       	} return;
+			 }
+		}
+      	}	
 }

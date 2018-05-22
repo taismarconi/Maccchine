@@ -26,10 +26,10 @@ using namespace std;
 extern int state, num_enemies;
 extern bool redraw;
 extern float speed;
-extern bool key[4];
+extern bool key[6];
 
 enum MYKEYS {
-   KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT
+   KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_SPACE, KEY_ESCAPE
 };
 
 void move_car(car_t &c, enemy_t *&ene) {
@@ -53,11 +53,11 @@ void move_car(car_t &c, enemy_t *&ene) {
 	redraw = true;
 }
 
-void check_collisione(car_t &c, enemy_t *&ene, ALLEGRO_DISPLAY *display, ALLEGRO_TIMER *timer) {
+void check_collisione(car_t &c, enemy_t *&ene, ALLEGRO_DISPLAY *display, ALLEGRO_TIMER *timer, bool &collisione) {
 	for (int i = 0; i < num_enemies; i++) {
 		if (c.x > ene[i].x - CAR_W + 13 && c.x < ene[i].x + CAR_E - 15) {
-			if (c.y < ene[i].y + CAR_H - 10 && c.y > ene[i].y - CAR_H) {
-				game_over(display, timer, c, ene);
+			if (c.y < ene[i].y + CAR_H - 10 && c.y > ene[i].y - CAR_H + 10) {
+				collisione = true;
 			}	
 		}
 	}

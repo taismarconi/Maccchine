@@ -23,28 +23,29 @@ using namespace std;
 
 const char nome_file[12] = "record.txt";
 
-const float FPS = 60;
-
 float speed = 4.0;
-float road_y = 2.0;
-float speedinc = 0.2;
-//float corsie[4] = {200, 325, 455, 585};
 
-int num_enemies = 6;
+extern int state, num_enemies;
+extern float speedinc, road_y;
 
-extern int state;
 extern bool doexit;
 extern bool redraw;
+extern bool key[6];
 
 enum MYKEYS {
-   KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT
+   KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_SPACE, KEY_ESCAPE
 };
 
-bool key[4] = { false, false, false, false };
-
-void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c) {
+void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, ALLEGRO_BITMAP* road, car_t &c) {
 	
-	int index, corsia;
+	/*variabile per controllare la velocità, una volta superata la soglia
+	prestabilita (speedinc > 3.5) viene settata a false in modo da non entrare più nell'if*/
+	bool controllo = true;
+	
+	bool collisione = false;
+	
+	int index_1, index_2, corsia;
+	
 	//inizializzo le altre struct
 	enemy_t *ene;
 	ene = new enemy_t [num_enemies];
@@ -76,105 +77,98 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c) {
 	numerofont = al_load_font("media/arcade.ttf", 40, 0);
 	recordfont = al_load_font("media/arcade.ttf", 30, 0);
 	scorefont = al_load_font("media/arcade.ttf", 40, 0);
-	
-	ALLEGRO_TIMER *timer = NULL;
-
-	timer = al_create_timer(1.0 / FPS);
-   	if(!timer) {
-      		fprintf(stderr, "failed to create timer!\n");
-    	}
-
-    	ALLEGRO_EVENT_QUEUE *event_queue_one = NULL;
-	event_queue_one = al_create_event_queue();
-   	
-   	if(!event_queue_one) {
-    		fprintf(stderr, "failed to create event_queue!\n");
-      		al_destroy_bitmap(road);
-      		al_destroy_display(display);
-      		al_destroy_timer(timer);
-   	}
- 
-   	al_register_event_source(event_queue_one, al_get_display_event_source(display));
-   	al_register_event_source(event_queue_one, al_get_timer_event_source(timer));
-   	al_register_event_source(event_queue_one, al_get_keyboard_event_source());
  
    	al_flip_display();
- 
-   	al_start_timer(timer);
 
    	while(!doexit) {
       		ALLEGRO_EVENT ev;
-      		al_wait_for_event(event_queue_one, &ev);
+      		al_wait_for_event(event_queue, &ev);
 		
       		if(ev.type == ALLEGRO_EVENT_TIMER) {
 			
       			score.punteggio += moveit(road_y);
-      			//std::cout<<score.punteggio<<" "<<score.record<<"\n";
       			
       			if (score.punteggio > score.record) {
       				score.record = score.punteggio;
       				std::ofstream ofs("record.txt");
       				ofs<<score.record;
 			}
-    			
-			move_car(c, ene);
-			check_collisione(c, ene, display, timer);	
 			
-			//cout<<speedinc<<endl;
+			move_car(c, ene);
+			
+			collisione = false;
+			check_collisione(c, ene, display, timer, collisione);
+			
+			while(collisione){
+				game_over(display, timer, event_queue, c, ene, collisione);
+				replay(c, ene, score);
+ 			}
  		}
  		
-		else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-			break;
-		}
-        	
-        	else if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-			switch(ev.keyboard.keycode) {
-			    case ALLEGRO_KEY_UP:
-			       key[KEY_UP] = true;
-			       break;
-
-			    case ALLEGRO_KEY_DOWN:
-			       key[KEY_DOWN] = true;
-			       break;
-
-			    case ALLEGRO_KEY_LEFT: 
-			       key[KEY_LEFT] = true;
-			       break;
-
-			    case ALLEGRO_KEY_RIGHT:
-			       key[KEY_RIGHT] = true;
-			       break;
-			 }
+ 		if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+         		break;
       		}
-      
+      		
+      		else if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+         		switch(ev.keyboard.keycode) {
+         			case ALLEGRO_KEY_ESCAPE:
+			       		doexit = false;
+			       		break;
+         			
+			    	case ALLEGRO_KEY_UP:
+			       		key[KEY_UP] = true;
+			       		break;
+
+			    	case ALLEGRO_KEY_DOWN:
+			       		key[KEY_DOWN] = true;
+			       		break;
+
+			    	case ALLEGRO_KEY_LEFT: 
+			       		key[KEY_LEFT] = true;
+			       		break;
+
+			    	case ALLEGRO_KEY_RIGHT:
+			       		key[KEY_RIGHT] = true;
+			       		break;
+			       		
+			       	case ALLEGRO_KEY_SPACE:
+			       		key[KEY_SPACE] = false;
+			       		break;	
+			 }   
+		}       
+
       		else if(ev.type == ALLEGRO_EVENT_KEY_UP) {
-		   	switch(ev.keyboard.keycode) {
-			    case ALLEGRO_KEY_UP:
-			       	key[KEY_UP] = false;
-			       	break;
+			 switch(ev.keyboard.keycode) {
+			 	case ALLEGRO_KEY_ESCAPE:
+			       		doexit = true;
+			       		break;
+			       		
+				case ALLEGRO_KEY_UP:
+				      	key[KEY_UP] = false;
+				       	break;
 
-			    case ALLEGRO_KEY_DOWN:
-			       	key[KEY_DOWN] = false;
-			       	break;
+				case ALLEGRO_KEY_DOWN:
+				       	key[KEY_DOWN] = false;
+				       	break;
 
-			    case ALLEGRO_KEY_LEFT: 
-			       	key[KEY_LEFT] = false;
-			       	break;
+				case ALLEGRO_KEY_LEFT: 
+				       	key[KEY_LEFT] = false;
+				       	break;
 
-			    case ALLEGRO_KEY_RIGHT:
-			       	key[KEY_RIGHT] = false;
-			       	break;
-
-			    case ALLEGRO_KEY_ESCAPE:
-			    	gestione_menu(display);
-			    	break;
-			}
-		}
+				case ALLEGRO_KEY_RIGHT:
+				       	key[KEY_RIGHT] = false;
+				       	break;
+				
+				case ALLEGRO_KEY_SPACE:
+			       		key[KEY_SPACE] = false;
+			       		break;       	
+			 }
+		}	 
 		
-     		if(redraw && al_is_event_queue_empty(event_queue_one)) {
-     			
+     		if(redraw && al_is_event_queue_empty(event_queue)) {	
      			srand((unsigned)time(NULL));
-			index = rand() % num_enemies;
+			index_1 = rand() % 3; //indice per generare le prime 3 (0, 1, 2)
+			index_2 = rand() % 3 + 3; //(3, 4, 5)
 			corsia = rand() % 7;
         
          		redraw = false;
@@ -183,28 +177,35 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_BITMAP* road, car_t &c) {
 
 	     		al_draw_bitmap(road, 0, road_y, 0);
 	     		al_draw_bitmap(road, 0, road_y - SCREEN_H + 5, 0);
+	
+			for (int i = 0; i < num_enemies; i++) {
+	   			al_draw_bitmap(ene[i].imm, ene[i].x, ene[i].y, 0);
+	   		}
+	   		
+			/*controllo della velocità, una volta superata 
+			una soglia il numero di nemici si abbassa a 3*/
+			if (speedinc > 3.0 && controllo) {
+				num_enemies = 3;
+				controllo = false;
+			}
 			
 			for (int i = 0; i < num_enemies; i++) {
 				if (ene[i].y > SCREEN_H - 10 && ene[i].y < SCREEN_H + 10) {
 					ene[i].y = - CAR_H;
 					
-					move_enemies(ene, index, corsia);
+					/*genero due diversi numeri casuali per gestire separatamente le due file,
+					in base a quale fila sto considerando uno dei due verrà passato alla funzione*/
+					if (i < 3) {
+						move_enemies(ene, index_1, corsia);
+					}
+					else {
+						move_enemies(ene, index_2, corsia);
+					}
 				}
 				
 				ene[i].y += 3.0 + speedinc;
-	   		}
-	   		
-	   		if (speedinc < 3.5) {
-	   			for (int i = 0; i < num_enemies; i++) {
-	   				al_draw_bitmap(ene[i].imm, ene[i].x, ene[i].y, 0);
-	   			}
-	   		}
-	   		else {
-	   			for (int i = 0; i < num_enemies/2; i++) {
-	   				al_draw_bitmap(ene[i].imm, ene[i].x, ene[i].y, 0);
-	   			}
 	   		}	
-	
+			
 			if (key[KEY_LEFT]) {
 				al_draw_bitmap(c.imm[2], c.x, c.y, 0);
 			}
