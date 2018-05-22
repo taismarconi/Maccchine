@@ -19,9 +19,7 @@
 #define SCREEN_W 840
 #define CAR_H 111
 
-extern int num_enemies;
 extern bool redraw;
-extern float speedinc;
 
 void move_enemies(enemy_t *&ene, int index, int &corsia) {
 	

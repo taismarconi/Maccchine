@@ -169,7 +169,7 @@ void gestione_menu(ALLEGRO_DISPLAY* display){
       		else if(ev.type == ALLEGRO_EVENT_KEY_UP) {
 			 switch(ev.keyboard.keycode) {
 			    	case ALLEGRO_KEY_ESCAPE:
-         				state = -1;
+         				//state = -1;
 			    		doexit = true;
 			       		break;
 
@@ -182,7 +182,7 @@ void gestione_menu(ALLEGRO_DISPLAY* display){
    	}
 }
 
-void game_over(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER *timer, ALLEGRO_EVENT_QUEUE *event_queue, car_t &c, enemy_t *&ene, bool &collisione) {
+void game_over(ALLEGRO_EVENT_QUEUE *event_queue, car_t &c, enemy_t *&ene, bool &collisione) {
 
 	cout<<"Collisione"<<endl;
 	
@@ -203,6 +203,7 @@ void game_over(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER *timer, ALLEGRO_EVENT_QUE
       		al_wait_for_event(event_queue, &ev);
       		       
                 if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+         		doexit = true;
          		break;
       		}
       		

@@ -25,7 +25,7 @@ const char nome_file[12] = "record.txt";
 
 float speed = 4.0;
 
-extern int state, num_enemies;
+extern int num_enemies;
 extern float speedinc, road_y;
 
 extern bool doexit;
@@ -97,14 +97,12 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEU
 			move_car(c, ene);
 			
 			collisione = false;
-			//check_collisione(c, ene, display, timer, collisione);
+			check_collisione(c, ene, collisione); //farla booleana? per togliere variabile collisione
 			
 			while(collisione){
-				game_over(display, timer, event_queue, c, ene, collisione);
+				game_over(event_queue, c, ene, collisione);
 				replay(c, ene, score);
  			}
- 			
- 			cout<<speedinc<<endl;
  		}
  		
  		if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {

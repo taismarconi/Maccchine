@@ -12,7 +12,7 @@
 using namespace std;
 
 #define SCREEN_W 840	/**< larghezza dello schermo*/
-#define SCREEN_H 650		/**< altezza dello schermo*/
+#define SCREEN_H 650	/**< altezza dello schermo*/
 
 int state = 0; // automaticamente settata a 0, extern permette di non passarla alle funzioni
 
@@ -38,6 +38,7 @@ int main() {
 	gestione_menu(display);
 
     	al_destroy_display(display);
+    	
     	return 0;
 }
 

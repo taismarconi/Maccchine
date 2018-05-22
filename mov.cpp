@@ -23,7 +23,7 @@ using namespace std;
 #define CAR_W 76
 #define CAR_E 58
 
-extern int state, num_enemies;
+extern int num_enemies;
 extern bool redraw;
 extern float speed;
 extern bool key[6];
@@ -53,7 +53,7 @@ void move_car(car_t &c, enemy_t *&ene) {
 	redraw = true;
 }
 
-void check_collisione(car_t &c, enemy_t *&ene, ALLEGRO_DISPLAY *display, ALLEGRO_TIMER *timer, bool &collisione) {
+void check_collisione(car_t &c, enemy_t *&ene, bool &collisione) {
 	for (int i = 0; i < num_enemies; i++) {
 		if (c.x > ene[i].x - CAR_W + 13 && c.x < ene[i].x + CAR_E - 15) {
 			if (c.y < ene[i].y + CAR_H - 10 && c.y > ene[i].y - CAR_H + 10) {
