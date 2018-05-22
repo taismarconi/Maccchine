@@ -97,15 +97,18 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEU
 			move_car(c, ene);
 			
 			collisione = false;
-			check_collisione(c, ene, display, timer, collisione);
+			//check_collisione(c, ene, display, timer, collisione);
 			
 			while(collisione){
 				game_over(display, timer, event_queue, c, ene, collisione);
 				replay(c, ene, score);
  			}
+ 			
+ 			cout<<speedinc<<endl;
  		}
  		
  		if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+         		doexit = true;
          		break;
       		}
       		
@@ -166,28 +169,16 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEU
 		}	 
 		
      		if(redraw && al_is_event_queue_empty(event_queue)) {	
+     			
      			srand((unsigned)time(NULL));
 			index_1 = rand() % 3; //indice per generare le prime 3 (0, 1, 2)
 			index_2 = rand() % 3 + 3; //(3, 4, 5)
 			corsia = rand() % 7;
         
-         		redraw = false;
- 
          		al_clear_to_color(al_map_rgb(0, 0, 0));
 
 	     		al_draw_bitmap(road, 0, road_y, 0);
 	     		al_draw_bitmap(road, 0, road_y - SCREEN_H + 5, 0);
-	
-			for (int i = 0; i < num_enemies; i++) {
-	   			al_draw_bitmap(ene[i].imm, ene[i].x, ene[i].y, 0);
-	   		}
-	   		
-			/*controllo della velocità, una volta superata 
-			una soglia il numero di nemici si abbassa a 3*/
-			if (speedinc > 3.0 && controllo) {
-				num_enemies = 3;
-				controllo = false;
-			}
 			
 			for (int i = 0; i < num_enemies; i++) {
 				if (ene[i].y > SCREEN_H - 10 && ene[i].y < SCREEN_H + 10) {
@@ -204,8 +195,19 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEU
 				}
 				
 				ene[i].y += 3.0 + speedinc;
-	   		}	
+	   		}
+	   		
+	   		/*controllo della velocità, una volta superata 
+			una soglia il numero di nemici si abbassa a 3*/
+			if (speedinc > 3.5 && controllo && ene[index_2].y > SCREEN_H - CAR_H) {
+				num_enemies = 3;
+				controllo = false;
+			}	
 			
+			for (int i = 0; i < num_enemies; i++) {
+	   			al_draw_bitmap(ene[i].imm, ene[i].x, ene[i].y, 0);
+	   		}
+	   		
 			if (key[KEY_LEFT]) {
 				al_draw_bitmap(c.imm[2], c.x, c.y, 0);
 			}
