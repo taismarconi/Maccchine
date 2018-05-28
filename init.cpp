@@ -21,8 +21,6 @@ using namespace std;
 #define SCREEN_H 650
 #define CAR_H 111
 
-extern int state;
-
 int num_enemies = 6;
 float speedinc = 0.2;
 float road_y = 2.0;
@@ -96,8 +94,7 @@ void gestione_menu(ALLEGRO_DISPLAY* display){
     	al_draw_text(instructionsfont, al_map_rgb(0, 0, 0), 150, 600, 0, "evitare  le   auto");
 	
 	car_t c;
-	
-	//inizializzo la macchina
+
 	c.x = SCREEN_W / 2.0 + 22.0;
 	c.y = SCREEN_H - CAR_H - 75.0;
 	
@@ -169,7 +166,6 @@ void gestione_menu(ALLEGRO_DISPLAY* display){
       		else if(ev.type == ALLEGRO_EVENT_KEY_UP) {
 			 switch(ev.keyboard.keycode) {
 			    	case ALLEGRO_KEY_ESCAPE:
-         				//state = -1;
 			    		doexit = true;
 			       		break;
 
@@ -235,7 +231,7 @@ void break_game(ALLEGRO_EVENT_QUEUE* event_queue, bool &pausa) {
 	
 }
 
-void game_over(ALLEGRO_EVENT_QUEUE *event_queue, car_t &c, enemy_t *&ene, bool &collisione) {
+void game_over(ALLEGRO_EVENT_QUEUE *event_queue, car_t &c, enemy_t *&ene, bool &collisione, ALLEGRO_BITMAP *boom) {
 
 	cout<<"Collisione"<<endl;
 	
@@ -281,6 +277,7 @@ void game_over(ALLEGRO_EVENT_QUEUE *event_queue, car_t &c, enemy_t *&ene, bool &
 			    	} break;
 			       		
 			 	case ALLEGRO_KEY_SPACE: {
+			 		al_draw_bitmap(boom, -200, -200, 0);
 			        	al_destroy_font(gameoverfont);
                                 	al_destroy_font(nextgamefont);
                                 	collisione = false;

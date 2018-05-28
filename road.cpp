@@ -23,7 +23,7 @@ using namespace std;
 
 const char nome_file[12] = "record.txt";
 
-float speed = 4.0;
+float speed = 6.0;
 
 extern int num_enemies;
 extern float speedinc, road_y;
@@ -68,6 +68,21 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEU
 	
 	ALLEGRO_BITMAP *scorebar = NULL;
     	scorebar = al_load_bitmap("media/score-bar.png");
+    	
+    	ALLEGRO_SAMPLE *playsong = NULL;
+    	ALLEGRO_SAMPLE *crash = NULL;
+
+    	if(!al_install_audio()){
+    		cout << "cannot start audio\n";
+    	}
+
+    	playsong = al_load_sample("media/arcade.wav");
+    	al_play_sample(playsong, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL);
+
+    	crash = al_load_sample("media/crash.wav");
+    	
+    	ALLEGRO_BITMAP *boom = NULL;
+    	boom = al_load_bitmap("media/boom.png");
     
     	ALLEGRO_FONT *punteggiofont;
     	ALLEGRO_FONT *numerofont;
@@ -101,10 +116,14 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEU
 			move_car(c, ene);
 			
 			collisione = false;
-			check_collisione(c, ene, collisione); //farla booleana? per togliere variabile collisione
+			check_collisione(c, ene, collisione, boom);
 			
+			if (collisione) {
+				al_play_sample(crash, 3.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+			}
+				
 			while(collisione){
-				game_over(event_queue, c, ene, collisione);
+				game_over(event_queue, c, ene, collisione, boom);
 				replay(c, ene, score);
  			}
  		}
