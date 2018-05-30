@@ -55,6 +55,7 @@
 #include <allegro5/allegro_image.h>
 
 #include "data.h"
+#include "function.h"
 
 using namespace std;
 
