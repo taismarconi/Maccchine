@@ -31,7 +31,7 @@ void move_enemies(enemy_t *&ene, int index, int &corsia) {
 		case 3: ene[index].x = 395; break;
 		case 4: ene[index].x = 455; break;
 		case 5: ene[index].x = 530; break;
-		case 6: ene[index].x = 585; break;
+		case 6: ene[index].x = 588; break;
 	}
     	
 	redraw = true;

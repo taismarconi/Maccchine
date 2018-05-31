@@ -23,7 +23,7 @@ float mov = 2.0;
 extern float speedinc;
 extern int num_enemies;
 
-int moveit(float &road_y){
+int move_road(float &road_y){
 
 	if(road_y > SCREEN_H - 10 && road_y < SCREEN_H + 10) {
 		road_y = 0;

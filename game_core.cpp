@@ -35,7 +35,7 @@ enum MYKEYS {
    KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_SPACE, KEY_ESCAPE
 };
 
-void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, ALLEGRO_BITMAP* road, car_t &c) {
+void move_game(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, ALLEGRO_BITMAP* road, car_t &c) {
 	
 	/*variabile per controllare la velocità, una volta superata la soglia
 	prestabilita (speedinc > 3.5) viene settata a false in modo da non entrare più nell'if*/
@@ -104,7 +104,7 @@ void moveroad(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEU
 		
       		if(ev.type == ALLEGRO_EVENT_TIMER) {
 			
-      			score.punteggio += moveit(road_y);
+      			score.punteggio += move_road(road_y);
       			
       			if (score.punteggio > score.record) {
       				score.record = score.punteggio;

@@ -169,7 +169,7 @@ void gestione_menu(ALLEGRO_DISPLAY* display){
 			       		break;
 
 			    	case ALLEGRO_KEY_SPACE:
-         				moveroad(display, timer, event_queue, road, c);
+         				move_game(display, timer, event_queue, road, c);
 			        	key[KEY_SPACE] = false;
 			        	break;
 			 }

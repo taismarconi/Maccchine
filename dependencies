@@ -1,0 +1,6 @@
+start_finish.o: start_finish.cpp data.h function.h
+main.o: main.cpp data.h function.h
+move_road.o: move_road.cpp data.h function.h
+game_core.o: game_core.cpp data.h function.h
+move_car.o: move_car.cpp data.h function.h
+enemies.o: enemies.cpp data.h function.h
