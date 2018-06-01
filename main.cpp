@@ -59,9 +59,6 @@
 
 using namespace std;
 
-#define SCREEN_W 840 /*<Larghezza del display. */
-#define SCREEN_H 650 /*<Altezza del display. */
-
 /**Funzione principale.
  * Il richiamo alla funzione "gestione_menu" permette la creazione 
  * degli oggetti principali e l'inizio del gioco.

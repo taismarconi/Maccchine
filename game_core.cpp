@@ -18,10 +18,6 @@
 
 using namespace std;
 
-#define SCREEN_H 650
-#define SCREEN_W 840
-#define CAR_H 111
-
 float speed = 6.0;
 
 extern int num_enemies;

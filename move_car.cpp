@@ -18,14 +18,6 @@
 
 using namespace std;
 
-#define SCREEN_H 650
-#define SCREEN_W 840
-#define CAR_H 111
-#define CAR_W 76
-#define CAR_E 58
-#define EXPLOSION_SIZE 128
-#define SCOREBAR_SIZE 75
-
 extern int num_enemies;
 extern bool redraw;
 extern float speed;

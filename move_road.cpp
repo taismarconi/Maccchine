@@ -16,8 +16,6 @@
 #include "data.h"
 #include "function.h"
 
-#define SCREEN_H 650
-
 float mov = 2.0;
 
 extern float speedinc;

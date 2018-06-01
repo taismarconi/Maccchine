@@ -16,10 +16,6 @@
 #include "data.h"
 #include "function.h"
 
-#define SCREEN_H 650
-#define SCREEN_W 840
-#define CAR_H 111
-
 extern bool redraw;
 
 void move_enemies(enemy_t *&ene, int index, int &corsia) {
