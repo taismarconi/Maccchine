@@ -82,34 +82,37 @@
 using namespace std;
 
 /**
- * Funzione principale. <br>
- * Il richiamo alla funzione ::gestione_menu permette la creazione 
- * degli oggetti principali e l'inizio del gioco.
- * 
+ * 	Funzione principale\n
+ * 	Il richiamo alla funzione gestione_menu permette la creazione 
+ * 	degli oggetti principali e iniziare il gioco. 
+ *	Vedere la documentazione della funzione ::gestione_menu per
+ *	maggiori informazioni.
  */
- 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
+	/*< Inizializzazione di Allegro.*/
+	if(!al_init()){
+    	al_show_native_message_box(NULL, NULL, NULL, "Could not inizialize Allegro5", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+    	return -1;
+	}
 
-    	if(!al_init()){
-        	al_show_native_message_box(NULL, NULL, NULL, "Could not inizialize Allegro5", NULL, ALLEGRO_MESSAGEBOX_ERROR);
-        	return -1;
-    	}
+	ALLEGRO_DISPLAY *display = al_create_display(SCREEN_W, SCREEN_H); /*<Oggetto ALLEGRO_DISPLAY, rappresentante il "display". */
+	al_set_window_title(display, "Cars");
+	
+	/*<Inizializzazione display.*/
+	if(!display){
+    	al_show_native_message_box(display, "Sample Title", "Display Settings", "Display not create", NULL,ALLEGRO_MESSAGEBOX_ERROR);
+    	return -1;   
+	}
 
-    	ALLEGRO_DISPLAY *display = al_create_display(SCREEN_W, SCREEN_H); /**Oggetto ALLEGRO_DISPLAY, rappresentante il "display". */
-    	al_set_window_title(display, "Cars");
-    	
-    	if(!display){
-        	al_show_native_message_box(display, "Sample Title", "Display Settings", "Display not create", NULL,ALLEGRO_MESSAGEBOX_ERROR);
-        	return -1;   
-    	}
-    
-       	al_init_primitives_addon(); /**Inizializzazione addon principali. */
-    	al_install_keyboard(); /**Inizializzazione input per l'interazione col gioco. */
-    	al_init_image_addon(); /**Inizializzazione addon immagini. */
-   
-	gestione_menu(display); /**Apertura della pagina principale del gioco. */
+   	al_init_primitives_addon(); /*<Inizializzazione addon principali. */
+	al_install_keyboard(); /*<Inizializzazione input per l'interazione col gioco. */
+	al_init_image_addon(); /*<Inizializzazione addon immagini. */
 
-    	al_destroy_display(display);
-    	
-    	return 0;
+	
+	gestione_menu(display);/*<Apertura della pagina principale del gioco. */
+
+	al_destroy_display(display);
+	
+	return 0;
 }

@@ -1,3 +1,18 @@
+/**
+ *	@file
+ *	
+ *	File che contiene la gestione del movimento della macchina
+ *	e l'eventuale collisione (che è causato dal movimento).
+ *
+ *	@param ::num_enemies
+ *	@param ::redraw
+ *	@param ::speed
+ *	@param ::key
+ *
+ *	@author Taisia Marconi e Mahmoud Marzak
+ *
+ */
+
 #include <iostream>
 #include <stdio.h>
 #include <cstdlib> 
@@ -18,17 +33,24 @@
 
 using namespace std;
 
+/*<Definizione di variabili esterne*/
 extern int num_enemies;
 extern bool redraw;
 extern float speed;
 extern bool key[6];
 
-enum MYKEYS {
-   KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_SPACE, KEY_ESCAPE
-};
-
-void move_car(car_t &c, enemy_t *&ene) {
-	
+/**
+ *	Questa funzione serve alla gestione del movimento
+ *	della macchina con le frecce.
+ *	@param c struttura che rappresenta la macchina (posizione x, posizione y, sprite)
+ *	@param ene struttura che rappresenta la macchina nemica (posizione x, posizione y, sprite)
+ *
+ */
+void move_car(car_t &c, enemy_t *&ene) 
+{
+	/*<Ad ogni tasto premuto corrisponde un movimento (su, giù, dx, sx)
+	 *dove ci sono numeri sono accorgimenti di posizione
+	 *per evitare di uscire dai bordi */
 	if(key[KEY_UP] && c.y > 5) {
         	c.y -= speed;
         }
@@ -47,12 +69,25 @@ void move_car(car_t &c, enemy_t *&ene) {
 	
 	redraw = true;
 }
-
-void check_collisione(car_t &c, enemy_t *&ene, bool &collisione, ALLEGRO_BITMAP *boom) {
+/**
+ *	Questa funzione controlla che ci sia una collisione provocata
+ *	dal movimento della macchina.
+ *	
+ *	@param c struttura che rappresenta la macchina (posizione x, posizione y, sprite)
+ *	@param ene struttura che rappresenta la macchina nemica (posizione x, posizione y, sprite)
+ *	@param collisione vero se avviene una collisione, falso altrimenti
+ *	@param boom sprite di uno scoppio che appare in caso di collisione
+ *	
+ */
+void check_collisione(car_t &c, enemy_t *&ene, bool &collisione, ALLEGRO_BITMAP *boom) 
+{
 	for (int i = 0; i < num_enemies; i++) {
+		/*<Qui in è un controllo perimetrale intorno all'auto nemica, se supero un limite si causa la collisione*/
 		if (c.x > ene[i].x - CAR_W + 13 && c.x < ene[i].x + CAR_E - 15) {
 			if (c.y < ene[i].y + CAR_H - 10 && c.y > ene[i].y - CAR_H + 10) {
 				collisione = true;
+				
+				/*<Controllo per per evitare di far apparire l'esplosione sopra alla barra della collsione.*/
 				if (ene[i].y <= SCREEN_H - SCOREBAR_SIZE - EXPLOSION_SIZE) {
 					al_draw_bitmap(boom, ene[i].x - 30.0, ene[i].y, 0);
 				}	

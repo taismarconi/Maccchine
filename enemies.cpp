@@ -1,3 +1,14 @@
+/**
+ *	@file
+ *	
+ *	File che contiene la gestione del posizionamento dei nemici.
+ *
+ *	@param ::redraw
+ *
+ *	@author Taisia Marconi e Mahmoud Marzak
+ *
+ */
+
 #include <iostream>
 #include <stdio.h>
 #include <cstdlib> 
@@ -18,8 +29,16 @@
 
 extern bool redraw;
 
+/**
+ * Funzione per il posizionamento di un determinato nemico in una determinata corsia
+ *
+ * @param ene struttura che rappresenta la macchina nemica (posizione x, posizione y, sprite)
+ */
 void move_enemies(enemy_t *&ene, int index, int &corsia) {
 	
+	/*<La variabile index determina quale dei 6 nemici deve essere posizionato.
+	 *Se è compreso fra 0 e 2 l'auto è generata nella prima fila, altrimenti nella seconda.
+	 *La variabile corsia determina in quale posizione l'auto deve essere generata*/
 	switch(corsia) {
 		case 0: ene[index].x = 195; break;
 		case 1: ene[index].x = 260; break;

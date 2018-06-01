@@ -1,5 +1,10 @@
+/**
+ *	@file
+ *
+ *	Header dedicato alle funzione che muovono
+ *	il gioco in tutte le sue parti.
+ */
 
-/**Prototipi delle funzioni del gioco*/
 void replay(car_t&, enemy_t*&, score_t&);
 void gestione_menu(ALLEGRO_DISPLAY*);
 void move_game(ALLEGRO_DISPLAY*, ALLEGRO_TIMER*, ALLEGRO_EVENT_QUEUE*, ALLEGRO_BITMAP*, car_t&);
