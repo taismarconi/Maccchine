@@ -31,6 +31,26 @@
 #include "data.h"
 #include "function.h"
 
+/**
+*Impostazione del debug
+**/
+#ifdef DEBUG_MODE
+extern unsigned int mask;
+#define DBG(A, B)                                                                                  \
+    {                                                                                              \
+        if ((A)&mask)                                                                              \
+        {                                                                                          \
+            B;                                                                                     \
+        }                                                                                          \
+    }
+#else
+#define DBG(A, B)
+#endif
+/**
+*La seguente definizione non è necessaria ma è comoda in quanto consente di scrivere D2(...) al posto di DBG (2, ...).
+**/
+#define D2(a) DBG(4, a)
+
 using namespace std;
 
 /*<Definizione di variabili esterne*/
@@ -85,6 +105,7 @@ void check_collisione(car_t &c, enemy_t *&ene, bool &collisione, ALLEGRO_BITMAP 
 		/*<Qui in è un controllo perimetrale intorno all'auto nemica, se supero un limite si causa la collisione*/
 		if (c.x > ene[i].x - CAR_W + 13 && c.x < ene[i].x + CAR_E - 15) {
 			if (c.y < ene[i].y + CAR_H - 10 && c.y > ene[i].y - CAR_H + 10) {
+				D2(cout << "Collisione!" <<endl);
 				collisione = true;
 				
 				/*<Controllo per per evitare di far apparire l'esplosione sopra alla barra della collsione.*/

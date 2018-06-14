@@ -8,7 +8,7 @@ cars: $(OBJ)
 	$(clean)
 
 -include dependencies
-.PHONY: depend clean cleanall
+.PHONY: depend clean cleanall debug
 
 depend:
 	g++ -MM *.cpp > dependencies
@@ -17,3 +17,5 @@ clean:
 	rm -f *.o
 cleanall:
 	rm -f spaceshooter *.o *~
+debug:
+	g++ -g -D DEBUG_MODE $(CFLAGS) -o cars $(OBJ) $(LDFLAGS)

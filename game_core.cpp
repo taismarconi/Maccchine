@@ -32,6 +32,26 @@
 #include "data.h"
 #include "function.h"
 
+/**
+*Impostazione del debug
+**/
+#ifdef DEBUG_MODE
+extern unsigned int mask;
+#define DBG(A, B)                                                                                  \
+    {                                                                                              \
+        if ((A)&mask)                                                                              \
+        {                                                                                          \
+            B;                                                                                     \
+        }                                                                                          \
+    }
+#else
+#define DBG(A, B)
+#endif
+/**
+*La seguente definizione non è necessaria ma è comoda in quanto consente di scrivere D2(...) al posto di DBG (2, ...).
+**/
+#define D2(a) DBG(4, a)
+
 using namespace std;
 
 /**Velocità del giocatore*/
@@ -56,6 +76,9 @@ extern bool key[6];
  */
 void move_game(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* event_queue, ALLEGRO_BITMAP* road, car_t &c) {
 	
+	D2(cout << "Inizio del gioco." <<endl);
+	
+	D2(cout << "Inizializzazione variabili di gioco...");
 	/*<Variabile per controllare la velocità, una volta superata la soglia
 	prestabilita (speedinc > 3.5) viene settata a false in modo da non entrare più nell'if*/
 	bool controllo = true;
@@ -73,11 +96,12 @@ void move_game(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUE
 	 */
 	int index_1, index_2, corsia;
 	
+	D2(cout << "Fatto!" <<endl);
+	
+	D2(cout << "Inizializzazione dei nemici...");
 	/*<Inizializzo le altre struct*/
 	enemy_t *ene;
 	ene = new enemy_t [num_enemies];
-	
-	score_t score;
 	
 	/*<Inizializzo i nemici*/
 	ene[0].x = 195; ene[0].y = - CAR_H; ene[0].imm = al_load_bitmap("media/bcar.png");
@@ -88,16 +112,27 @@ void move_game(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUE
 	ene[4].x = 395; ene[4].y = - CAR_H - SCREEN_H/2; ene[4].imm = al_load_bitmap("media/gcar.png");
 	ene[5].x = 260; ene[5].y = - CAR_H - SCREEN_H/2; ene[5].imm = al_load_bitmap("media/wwcar.png");
 	
+	D2(cout << "Fatto!" <<endl);
+	
+	D2(cout << "Inizializzazione punteggio..." <<endl);
+	score_t score;
+	
 	/*<Set del punteggio*/
 	score.punteggio = 0;
-	/*<Scrittura su file*/
+	
+	D2(cout << "Lettura del record...");
+	/*<Lettura da file*/
 	std::ifstream ifs("record.txt");
 	ifs>>score.record;
+	D2(cout << "Fatto!" <<endl);
 	
+	D2(cout << "Inizializzazione barra punteggio...");
 	/*<Oggetto di tipo ALLEGRO_BITMAP che disegna la barra per la visualizzazione del punteggio e del record*/
 	ALLEGRO_BITMAP *scorebar = NULL;
     	scorebar = al_load_bitmap("media/score-bar.png");
+    	D2(cout << "Fatto!" <<endl);
     	
+    	D2(cout << "Inizializzazione audio...");
     	ALLEGRO_SAMPLE *playsong = NULL;
     	ALLEGRO_SAMPLE *crash = NULL;
 
@@ -110,10 +145,15 @@ void move_game(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUE
 
     	crash = al_load_sample("media/crash.wav");
     	
+    	D2(cout << "Fatto!" <<endl);
+    	
+    	D2(cout << "Inizializzazione esplosione...");
     	/*<Oggetto di tipo ALLEGRO_BITMAP che disegna l'esplosione nella collisione*/
     	ALLEGRO_BITMAP *boom = NULL;
     	boom = al_load_bitmap("media/boom.png");
+    	D2(cout << "Fatto!" <<endl);
     
+    	D2(cout << "Set dei messaggi...");
     	/*<Font che scrivono il punteggio e il record*/
     	ALLEGRO_FONT *punteggiofont;
     	ALLEGRO_FONT *numerofont;
@@ -128,9 +168,11 @@ void move_game(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUE
 	numerofont = al_load_font("media/arcade.ttf", 40, 0);
 	recordfont = al_load_font("media/arcade.ttf", 30, 0);
 	scorefont = al_load_font("media/arcade.ttf", 40, 0);
+	D2(cout << "Fatto!" <<endl);
  
    	al_flip_display();
 
+	D2(cout << "Gioco in movimento..." <<endl);
 	/*<Ciclo per la gestione degli eventi*/
    	while(!doexit) {
       		ALLEGRO_EVENT ev; /*<Oggetto ALLEGRO_EVENT che identifica il tipo di evento*/
@@ -164,11 +206,9 @@ void move_game(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUE
 			
 			/*<Finchè la collisione è vera lo stato del gioco è sul gameover,
 			 *da cui si può uscire tramite due opzioni (spazio per ricominciare, esc per uscire)*/	
-			while(collisione){
+			while(collisione) {
 				/*<Stato del gameover*/
-				game_over(event_queue, c, ene, collisione, boom);
-				/*<Ripristino stato iniziale*/
-				replay(c, ene, score);
+				game_over(event_queue, c, ene, score, collisione, boom);
  			}
  		}
  		
@@ -273,7 +313,7 @@ void move_game(ALLEGRO_DISPLAY* display, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUE
 	   		
 	   		/*<Controllo della velocità, una volta superata 
 			una soglia il numero di nemici si abbassa a 3*/
-			if (speedinc > 3.5 && controllo && ene[index_2].y > SCREEN_H - CAR_H) {
+			if (speedinc > 5.0 && controllo && ene[index_2].y > SCREEN_H - CAR_H) {
 				num_enemies = 3;
 				controllo = false;
 			}	

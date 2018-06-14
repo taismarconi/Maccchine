@@ -66,8 +66,7 @@
    *
    */
   
-  
-#include <stdio.h>
+#include <iostream>
 #include <cstdlib> 
 #include <ctime>
 
@@ -82,6 +81,26 @@
 using namespace std;
 
 /**
+*Impostazione del debug
+**/
+#ifdef DEBUG_MODE
+unsigned int mask = 7;
+#define DBG(A, B)                                                                                  \
+    {                                                                                              \
+        if ((A)&mask)                                                                              \
+        {                                                                                          \
+            B;                                                                                     \
+        }                                                                                          \
+    }
+#else
+#define DBG(A, B)
+#endif
+/**
+*La seguente definizione non è necessaria ma è comoda in quanto consente di scrivere D1(...) al posto di DBG (1, ...).
+**/
+#define D1(a) DBG(1, a)
+
+/**
  * 	Funzione principale\n
  * 	Il richiamo alla funzione gestione_menu permette la creazione 
  * 	degli oggetti principali e iniziare il gioco. 
@@ -90,29 +109,39 @@ using namespace std;
  */
 int main(int argc, char** argv)
 {
+	D1(cout << "Inizializzazione interfaccia grafica.....");
 	/*< Inizializzazione di Allegro.*/
 	if(!al_init()){
     	al_show_native_message_box(NULL, NULL, NULL, "Could not inizialize Allegro5", NULL, ALLEGRO_MESSAGEBOX_ERROR);
     	return -1;
 	}
+	D1(cout << "Fatto!" <<endl);
 
+	D1(cout << "Creazione display.....");
 	ALLEGRO_DISPLAY *display = al_create_display(SCREEN_W, SCREEN_H); /*<Oggetto ALLEGRO_DISPLAY, rappresentante il "display". */
 	al_set_window_title(display, "Cars");
+	D1(cout << "Fatto!" <<endl);
 	
+	D1(cout << "Inizializzazione display.....");
 	/*<Inizializzazione display.*/
 	if(!display){
     	al_show_native_message_box(display, "Sample Title", "Display Settings", "Display not create", NULL,ALLEGRO_MESSAGEBOX_ERROR);
     	return -1;   
 	}
+	D1(cout << "Fatto!" <<endl);
 
+	D1(cout << "Inizializzazione addon.....");
    	al_init_primitives_addon(); /*<Inizializzazione addon principali. */
+   	D1(cout << "\tInizializzazione tastiera.....");
 	al_install_keyboard(); /*<Inizializzazione input per l'interazione col gioco. */
 	al_init_image_addon(); /*<Inizializzazione addon immagini. */
-
+	D1(cout << "Fatto!" <<endl);
 	
 	gestione_menu(display);/*<Apertura della pagina principale del gioco. */
 
+	D1(cout << "Uscita dal gioco.....");
 	al_destroy_display(display);
+	D1(cout << "Fatto!" << endl);
 	
 	return 0;
 }
